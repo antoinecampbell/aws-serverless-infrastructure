@@ -1,0 +1,32 @@
+stages:
+  - build
+  - publish
+  - deploy-dev
+  - deploy-prod
+
+default:
+  image: registry.gitlab.com/antoinecampbell/aws-serverless-infrastructure/build
+
+test:
+    stage: build
+    script:
+      - cd node-functions/notes
+      - yarn install
+      - yarn test
+      - yarn sonar
+    cache:
+      key: "${CI_JOB_NAME}"
+      policy: pull-push
+      paths:
+        - node-functions/notes/node_modules/
+
+publish:
+  stage: publish
+  script:
+    - cd node-functions/notes
+    - yarn build-zip
+    cache:
+      key: "${CI_JOB_NAME}"
+      policy: pull-push
+      paths:
+        - node-functions/notes/node_modules/

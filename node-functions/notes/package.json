@@ -1,0 +1,35 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "nyc jasmine --config=config/jasmine.json",
+    "build-zip": "yarn install --production && rm -rf lambda.zip && zip -q -r lambda.zip node_modules src/*",
+    "build-zip:local": "yarn run build-zip && yarn",
+    "sonar": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN}",
+    "sonar:local": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000}",
+    "start": "node -e \"console.log(require('./src/index').getNotesHandler({}));\"",
+    "start-create": "node -e \"console.log(require('./src/index').createNoteHandler({body: '{\\\"name\\\": \\\"note1\\\"}'}));\""
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1.0",
+    "@aws-sdk/util-dynamodb": "^3.1.0",
+    "jasmine": "^3.6.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.6.2",
+    "nyc": "^15.1.0",
+    "sonarqube-scanner": "^2.8.0"
+  },
+  "nyc": {
+    "temp-dir": "build/tmp",
+    "all": true,
+    "include": "src/*.js",
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "report-dir": "build/test-results"
+  }
+}

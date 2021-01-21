@@ -1,0 +1,78 @@
+{
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/DynamoDB",
+            "ConsumedReadCapacityUnits",
+            "TableName",
+            "${notes_table_name}",
+            {
+              "yAxis": "right"
+            }
+          ],
+          [
+            "AWS/DynamoDB",
+            "ConsumedWriteCapacityUnits",
+            "TableName",
+            "${notes_table_name}",
+            {
+              "yAxis": "right"
+            }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "${region}",
+        "start": "-PT1H",
+        "end": "P0D",
+        "stat": "Average",
+        "period": 30,
+        "title": "Notes table read/write"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 0,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/Lambda",
+            "Errors",
+            "FunctionName",
+            "${get_notes_function_name}",
+            {
+              "yAxis": "right",
+              "color": "#d62728"
+            }
+          ],
+          [
+            ".",
+            "Invocations",
+            ".",
+            ".",
+            {
+              "color": "#1f77b4",
+              "yAxis": "right"
+            }
+          ]
+        ],
+        "period": 60,
+        "region": "${region}",
+        "title": "Lambda ${get_notes_function_name}",
+        "view": "timeSeries",
+        "stacked": false,
+        "stat": "Sum"
+      }
+    }
+  ]
+}
