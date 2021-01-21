@@ -5,7 +5,7 @@ stages:
   - deploy-prod
 
 default:
-  image: registry.gitlab.com/antoinecampbell/aws-serverless-infrastructure/build
+  image: "${BUILD_DOCKER_IMAGE}"
 
 test:
   stage: test
