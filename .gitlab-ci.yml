@@ -7,7 +7,7 @@ stages:
 default:
   image: registry.gitlab.com/antoinecampbell/aws-serverless-infrastructure/build
 
-test:
+build:
   stage: build
   script:
     - cd node-functions/notes
