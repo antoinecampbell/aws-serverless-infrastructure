@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/jasmine": "^3.6.2",
     "nyc": "^15.1.0",
-    "sonarqube-scanner": "^2.8.0"
+    "sonar-scanner": "^3.1.0"
   },
   "nyc": {
     "temp-dir": "build/tmp",
