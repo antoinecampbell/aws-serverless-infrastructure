@@ -1,14 +1,14 @@
 stages:
+  - test
   - build
-  - publish
   - deploy-dev
   - deploy-prod
 
 default:
   image: registry.gitlab.com/antoinecampbell/aws-serverless-infrastructure/build
 
-build:
-  stage: build
+test:
+  stage: test
   script:
     - cd node-functions/notes
     - yarn install
@@ -20,8 +20,8 @@ build:
     paths:
       - node-functions/notes/node_modules/
 
-publish:
-  stage: publish
+build:
+  stage: build
   script:
     - cd node-functions/notes
     - yarn build-zip
