@@ -9,8 +9,7 @@ npm install -g yarn
 brew install yarn
 ```
 
-Install node dependencies in the `typescript-functions/notes` and
-`typescript-functions/shared` directories.
+Install node dependencies in the `node-functions/notes` directory.
 ```shell script
 yarn install
 ```
