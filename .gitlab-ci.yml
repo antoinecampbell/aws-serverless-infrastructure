@@ -50,12 +50,12 @@ deploy-dev:
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
   script:
-    - (cd node-functions && yarn build-zip)
+#    - (cd node-functions && yarn build-zip)
     - cd terraform
     - terraform init
     - terraform apply -auto-approve
   cache:
-    policy: pull-push
     key: terraform-dev
+    policy: pull-push
     paths:
       - ${TF_ROOT}/.terraform
