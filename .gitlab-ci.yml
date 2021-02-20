@@ -38,7 +38,7 @@ build:
       - node-functions/node_modules/
 
 deploy-dev:
-  stage: deply-dev
+  stage: deploy-dev
   environment:
     name: dev
   dependencies:
