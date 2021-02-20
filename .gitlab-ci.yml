@@ -27,10 +27,9 @@ build:
     - cd node-functions
     - yarn build-zip
   artifacts:
-    expire_in: 30 days
+    expire_in: 7 days
     paths:
       - node-functions/lambda.zip
-
   cache:
     key: "${CI_JOB_NAME}"
     policy: pull-push
@@ -43,15 +42,15 @@ deploy-dev:
     name: dev
   dependencies:
     - build
-  image: registry.gitlab.com/gitlab-org/terraform-images/branches/v0-8-0-0.14:2b9534c30ef5146aff5c2f284f5ba6943f94b3f8
+#  image: registry.gitlab.com/gitlab-org/terraform-images/branches/v0-8-0-0.14:2b9534c30ef5146aff5c2f284f5ba6943f94b3f8
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/terraform
-    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_HTTP_USERNAME: gitlab-ci-token
+    TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
   script:
-    - apk add curl unzip
-    - 'curl --location --output artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/${CI_JOB_ID}/artifacts"'
-    - unzip artifacts.zip
+    - (cd node-functions && yarn build-zip)
     - cd terraform
     - gitlab-terraform init
     - gitlab-terraform plan
