@@ -53,7 +53,7 @@ deploy-dev:
     - (cd node-functions && yarn build-zip)
     - cd terraform
     - terraform init
-    - terraform plan
+    - terraform apply -auto-approve
   cache:
     policy: pull-push
     key: terraform-dev
