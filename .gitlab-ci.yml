@@ -54,5 +54,5 @@ deploy-dev:
   cache:
     policy: pull-push
     key: terraform-dev
-      paths:
-        - ${TF_ROOT}/.terraform
+    paths:
+      - ${TF_ROOT}/.terraform
