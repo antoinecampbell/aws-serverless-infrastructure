@@ -16,7 +16,7 @@ test:
     - yarn test
     - yarn sonar
   cache:
-    key: "${CI_JOB_NAME}"
+    key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - node-functions/node_modules/
@@ -31,7 +31,7 @@ build:
     paths:
       - node-functions/lambda.zip
   cache:
-    key: "${CI_JOB_NAME}"
+    key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - node-functions/node_modules/
@@ -42,7 +42,6 @@ deploy-dev:
     name: dev
   dependencies:
     - build
-#  image: registry.gitlab.com/gitlab-org/terraform-images/branches/v0-8-0-0.14:2b9534c30ef5146aff5c2f284f5ba6943f94b3f8
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/terraform
     TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
@@ -50,12 +49,11 @@ deploy-dev:
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
   script:
-#    - (cd node-functions && yarn build-zip)
     - cd terraform
     - terraform init
     - terraform apply -auto-approve
   cache:
-    key: terraform-dev
+    key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - ${TF_ROOT}/.terraform
