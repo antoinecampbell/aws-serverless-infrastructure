@@ -52,8 +52,8 @@ deploy-dev:
   script:
     - (cd node-functions && yarn build-zip)
     - cd terraform
-    - gitlab-terraform init
-    - gitlab-terraform plan
+    - terraform init
+    - terraform plan
   cache:
     policy: pull-push
     key: terraform-dev
