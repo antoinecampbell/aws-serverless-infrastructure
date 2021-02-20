@@ -20,6 +20,7 @@ exports.getNotesHandler = async (event) => {
     }
   }
 
+  console.log('Output', output);
   return output;
 }
 
@@ -42,5 +43,6 @@ exports.createNoteHandler = async (event) => {
     }
   }
 
+  console.log('Output', output);
   return output;
 }

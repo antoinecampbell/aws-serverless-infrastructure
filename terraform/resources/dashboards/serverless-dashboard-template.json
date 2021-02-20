@@ -73,6 +73,43 @@
         "stacked": false,
         "stat": "Sum"
       }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 7,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/Lambda",
+            "Errors",
+            "FunctionName",
+            "${create_note_function_name}",
+            {
+              "yAxis": "right",
+              "color": "#d62728"
+            }
+          ],
+          [
+            ".",
+            "Invocations",
+            ".",
+            ".",
+            {
+              "color": "#1f77b4",
+              "yAxis": "right"
+            }
+          ]
+        ],
+        "period": 60,
+        "region": "${region}",
+        "title": "Lambda ${create_note_function_name}",
+        "view": "timeSeries",
+        "stacked": false,
+        "stat": "Sum"
+      }
     }
   ]
 }

@@ -6,5 +6,6 @@ resource "aws_cloudwatch_dashboard" "serverless_dashboard" {
     region: var.region
     notes_table_name : aws_dynamodb_table.notes.name
     get_notes_function_name: module.get_notes_lambda.function_name
+    create_note_function_name: module.create_note_lambda.function_name
   })
 }

@@ -1,11 +1,12 @@
 stages:
   - test
   - build
+  - publish
   - deploy-dev
   - deploy-prod
 
 default:
-  image: "${BUILD_DOCKER_IMAGE}"
+  image: registry.gitlab.com/antoinecampbell/docker-images/build
 
 test:
   stage: test
@@ -18,15 +19,40 @@ test:
     key: "${CI_JOB_NAME}"
     policy: pull-push
     paths:
-      - node-functions/notes/node_modules/
+      - node-functions/node_modules/
 
 build:
   stage: build
   script:
     - cd node-functions/notes
     - yarn build-zip
+  artifacts:
+    expire_in: 30 days
+    paths:
+      - node-functions/lambda.zip
+
   cache:
     key: "${CI_JOB_NAME}"
     policy: pull-push
     paths:
-      - node-functions/notes/node_modules/
+      - node-functions/node_modules/
+
+deploy-dev:
+  stage: deply-dev
+  environment:
+    name: dev
+  dependencies:
+    - build
+  image: registry.gitlab.com/gitlab-org/terraform-images/branches/v0-8-0-0.14:2b9534c30ef5146aff5c2f284f5ba6943f94b3f8
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/terraform
+    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_VAR_environment=${CI_ENVIRONMENT_NAME}
+  script:
+    - gitlab-terraform init
+    - gitlab-terraform plan
+  cache:
+    policy: pull-push
+    key: terraform-dev
+      paths:
+        - ${TF_ROOT}/.terraform

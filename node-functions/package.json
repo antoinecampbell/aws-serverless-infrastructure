@@ -1,5 +1,5 @@
 {
-  "name": "notes",
+  "name": "@aws-serverless-architecture/notes",
   "version": "1.0.0",
   "private": true,
   "scripts": {

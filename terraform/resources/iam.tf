@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "lambda_service_role" {
   }
 }
 
-resource "aws_iam_role" "lambda_dynamo_vpc" {
-  name = "lambda-dynamodb-vpc-role-${var.environment}"
+resource "aws_iam_role" "notes_lambda_dynamo" {
+  name = "notes-lambda-dynamodb-role-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.lambda_service_role.json
   tags = local.tags
 }
@@ -38,11 +38,11 @@ resource "aws_iam_policy" "notes_table" {
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_lambda" {
-  role = aws_iam_role.lambda_dynamo_vpc.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role = aws_iam_role.notes_lambda_dynamo.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy_attachment" "notes_table_dynamodb" {
-  role = aws_iam_role.lambda_dynamo_vpc.name
+  role = aws_iam_role.notes_lambda_dynamo.name
   policy_arn = aws_iam_policy.notes_table.arn
 }

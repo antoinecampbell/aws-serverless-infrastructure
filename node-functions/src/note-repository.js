@@ -20,13 +20,14 @@ module.exports = class NoteRepository {
   }
 
   createNote(note) {
+    const item = {
+      ...note,
+      pk: 'Note',
+      sk: `${Date.now()}#${uuidv4()}`
+    }
     return this.client.send(new PutItemCommand({
       TableName: this.tableName,
-      Item: marshall({
-        ...note,
-        pk: 'Note',
-        sk: `${Date.now()}#${uuidv4()}`
-      }),
-    }))
+      Item: marshall(item),
+    })).then(() => item)
   }
 }
