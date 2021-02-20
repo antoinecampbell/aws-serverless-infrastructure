@@ -11,7 +11,7 @@ default:
 test:
   stage: test
   script:
-    - cd node-functions/notes
+    - cd node-functions
     - yarn install
     - yarn test
     - yarn sonar
@@ -24,7 +24,7 @@ test:
 build:
   stage: build
   script:
-    - cd node-functions/notes
+    - cd node-functions
     - yarn build-zip
   artifacts:
     expire_in: 30 days
