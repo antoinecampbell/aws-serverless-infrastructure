@@ -1,21 +1,16 @@
-const NoteRepository = require('../src/note-repository');
 const handler = require('../src/index');
+const NoteRepository = require('../src/note-repository');
+jest.mock('../src/note-repository');
 
 describe('Handler', () => {
-  let repositorySpy;
-  let getNotesSpy;
-  let createNoteSpy;
 
-  beforeEach(() => {
-    repositorySpy = spyOnAllFunctions(NoteRepository);
-    getNotesSpy = spyOn(repositorySpy.prototype, 'getNotes').and.returnValue(Promise.resolve([
-      {name: 'note1'},
-      {name: 'note2'},
-    ]));
-    createNoteSpy = spyOn(repositorySpy.prototype, 'createNote').and.returnValue(Promise.resolve({
-      name: 'note1'
-    }));
-  });
+  NoteRepository.prototype.getNotes.mockReturnValue(Promise.resolve([
+    {name: 'note1'},
+    {name: 'note2'},
+  ]));
+  NoteRepository.prototype.createNote.mockReturnValue(Promise.resolve({
+    name: 'note1'
+  }));
 
   it('should fetch notes', async () => {
     const response = await handler.getNotesHandler({});
@@ -27,7 +22,7 @@ describe('Handler', () => {
   });
 
   it('should fail to fetch notes', async () => {
-    getNotesSpy.and.returnValue(Promise.reject({message: 'error'}));
+    NoteRepository.prototype.getNotes.mockReturnValue(Promise.reject({message: 'error'}));
     const response = await handler.getNotesHandler({});
 
     expect(response).toEqual({
@@ -47,8 +42,8 @@ describe('Handler', () => {
     });
   });
 
-  it('should fail tocreate note', async () => {
-    createNoteSpy.and.returnValue(Promise.reject({message: 'error'}));
+  it('should fail to create note', async () => {
+    NoteRepository.prototype.createNote.mockReturnValue(Promise.reject({message: 'error'}));
     const response = await handler.createNoteHandler({
       body: JSON.stringify({name: 'note1'})
     });

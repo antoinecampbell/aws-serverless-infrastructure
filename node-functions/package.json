@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "nyc jasmine --config=config/jasmine.json",
+    "test": "jest",
     "build-zip": "yarn install --production && rm -rf lambda.zip && zip -q -r lambda.zip node_modules src/*",
     "build-zip:local": "yarn run build-zip && yarn",
     "sonar": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN}",
@@ -14,22 +14,30 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1.0",
     "@aws-sdk/util-dynamodb": "^3.1.0",
-    "jasmine": "^3.6.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.6.2",
-    "nyc": "^15.1.0",
+    "@types/jest": "^26.0.20",
+    "jest": "^26.6.3",
+    "jest-junit": "^12.0.0",
     "sonar-scanner": "^3.1.0"
   },
-  "nyc": {
-    "temp-dir": "build/tmp",
-    "all": true,
-    "include": "src/*.js",
-    "reporter": [
-      "lcov",
-      "text-summary"
+  "jest": {
+    "reporters": [
+      "default",
+      "jest-junit"
     ],
-    "report-dir": "build/test-results"
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/*.{js,jsx}",
+      "!**/node_modules/**"
+    ],
+    "coverageDirectory": "build"
+  },
+  "jest-junit": {
+    "outputDirectory": "build"
   }
 }
