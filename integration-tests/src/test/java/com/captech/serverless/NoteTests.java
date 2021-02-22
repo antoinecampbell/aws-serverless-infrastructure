@@ -24,6 +24,8 @@ public class NoteTests {
     @BeforeEach
     void setUp() {
         baseURI = System.getenv("BASE_URI");
+        System.out.println("Table name: " + tableName);
+        System.out.println("Base URI: " + baseURI);
     }
 
     @AfterEach

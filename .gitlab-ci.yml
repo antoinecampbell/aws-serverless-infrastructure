@@ -53,9 +53,11 @@ integration-test:
     - terraform init
     - terraform apply -auto-approve
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
+    - echo $TABLE_NAME
     - export BASE_URI=$(terraform output -raw api_url)
+    - echo $BASE_URI
     - cd $CI_PROJECT_DIR/integration-tests
-    - ./gradlew test
+    - ./gradlew test --debug
   after_script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform destroy -auto-approve
@@ -66,7 +68,13 @@ integration-test:
       - terraform/resources/terraform.tfstate
     reports:
       junit:
-        - integration-tests/build/test-results/test/*.xml
+        - integration-tests/build/test-results/test/**/TEST-*.xml
+  cache:
+    key: ${CI_JOB_NAME}
+    policy: pull-push
+    paths:
+      - terraform/resources/.terraform
+      - integration-tests/.gradle
 
 deploy-dev:
   stage: deploy-dev
