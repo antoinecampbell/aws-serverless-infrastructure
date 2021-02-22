@@ -51,8 +51,7 @@ integration-test:
   script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform init
-    - terraform plan -out=test.tfplan
-    - terraform apply test.tfplan
+    - terraform apply -auto-approve
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
     - echo $TABLE_NAME
     - export BASE_URI=$(terraform output -raw api_url)
@@ -69,7 +68,6 @@ integration-test:
     paths:
       - terraform/resources/terraform.tfstate
     reports:
-      terraform: terraform/resources/test.tfplan
       junit:
         - integration-tests/build/test-results/test/**/TEST-*.xml
   cache:
@@ -90,10 +88,14 @@ deploy-dev:
     TF_HTTP_USERNAME: gitlab-ci-token
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
+  before_script:
+    - apk --no-cache add jq
+    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
   script:
     - cd terraform
     - terraform init
     - terraform plan -out=dev.tfplan
+    - terraform show --json dev.tfplan | convert_report > tfplan.json
     - terraform apply dev.tfplan
   cache:
     key: ${CI_JOB_NAME}
@@ -102,4 +104,4 @@ deploy-dev:
       - terraform/.terraform
   artifacts:
     reports:
-      terraform: terraform/dev.tfplan
+      terraform: terraform/tfplan.json
