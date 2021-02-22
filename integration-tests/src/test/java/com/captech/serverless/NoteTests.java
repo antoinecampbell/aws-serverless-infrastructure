@@ -30,7 +30,7 @@ public class NoteTests {
 
     @AfterEach
     void tearDown() throws Exception {
-        AwsTestUtils.clearTable("notes-dev");
+        AwsTestUtils.clearTable(tableName);
     }
 
     @Test
