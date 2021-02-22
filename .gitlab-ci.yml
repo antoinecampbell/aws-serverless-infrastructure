@@ -87,7 +87,7 @@ deploy-dev:
   dependencies:
     - build
   variables:
-    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_NAME}
     TF_HTTP_USERNAME: gitlab-ci-token
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
@@ -118,7 +118,7 @@ deploy-prod:
     - build
     - deploy-dev
   variables:
-    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_NAME}
     TF_HTTP_USERNAME: gitlab-ci-token
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
