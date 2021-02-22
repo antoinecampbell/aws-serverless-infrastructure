@@ -51,22 +51,25 @@ integration-test:
   script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform init
-    - terraform apply -auto-approve
+    - terraform plan -out=test.tfplan
+    - terraform apply test.tfplan
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
     - echo $TABLE_NAME
     - export BASE_URI=$(terraform output -raw api_url)
     - echo $BASE_URI
     - cd $CI_PROJECT_DIR/integration-tests
-    - ./gradlew test --debug
+    - ./gradlew test
   after_script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform destroy -auto-approve
   artifacts:
+    when: always
     expire_in: 7 days
     name: terraform-state
     paths:
       - terraform/resources/terraform.tfstate
     reports:
+      terraform: terraform/resources/test.tfplan
       junit:
         - integration-tests/build/test-results/test/**/TEST-*.xml
   cache:
@@ -83,7 +86,6 @@ deploy-dev:
   dependencies:
     - build
   variables:
-    TF_ROOT: ${CI_PROJECT_DIR}/terraform
     TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
     TF_HTTP_USERNAME: gitlab-ci-token
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
@@ -91,9 +93,13 @@ deploy-dev:
   script:
     - cd terraform
     - terraform init
-    - terraform apply -auto-approve
+    - terraform plan -out=dev.tfplan
+    - terraform apply dev.tfplan
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
-      - ${TF_ROOT}/.terraform
+      - terraform/.terraform
+  artifacts:
+    reports:
+      terraform: terraform/dev.tfplan
