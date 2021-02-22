@@ -12,8 +12,8 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -22,14 +22,10 @@ public class NoteTests {
     private final String tableName = System.getenv("TABLE_NAME");
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         baseURI = System.getenv("BASE_URI");
         System.out.println("Table name: " + tableName);
         System.out.println("Base URI: " + baseURI);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
         AwsTestUtils.clearTable(tableName);
     }
 
@@ -52,6 +48,22 @@ public class NoteTests {
                 .statusCode(200)
                 .body("$.size()", equalTo(2))
                 .body("[0].name", equalTo("name1"));
+    }
+
+    @Test
+    @Order(3)
+    void shouldCreateNote() {
+        Map<String, Object> item = new HashMap<>();
+        item.put("name", "name1");
+        given().contentType("application/json")
+                .body(item)
+                .when()
+                .post("/notes")
+                .then()
+                .log().body(true)
+                .body("name", equalTo("name1"))
+                .body("pk", any(String.class))
+                .body("sk", any(String.class));
     }
 
     private void insertNote(String name, String sk) {
