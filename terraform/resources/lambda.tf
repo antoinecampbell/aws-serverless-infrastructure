@@ -10,6 +10,7 @@ module "get_notes_lambda" {
   environment_variables = {
     TABLE_NAME = aws_dynamodb_table.notes.name
   }
+  timeout = 5
   tags = local.tags
 }
 
@@ -35,6 +36,7 @@ module "create_note_lambda" {
   environment_variables = {
     TABLE_NAME = aws_dynamodb_table.notes.name
   }
+  timeout = 5
   tags = local.tags
 }
 

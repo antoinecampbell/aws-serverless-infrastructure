@@ -48,6 +48,9 @@ integration-test:
     name: test
   variables:
     TF_VAR_environment: ${CI_COMMIT_SHORT_SHA}
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/integration-tests/.gradle
   script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform init
