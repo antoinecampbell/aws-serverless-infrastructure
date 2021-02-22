@@ -11,7 +11,6 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.get;
@@ -20,18 +19,29 @@ import static org.hamcrest.Matchers.equalTo;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NoteTests {
 
-    private final String tableName = Optional.ofNullable(System.getenv("TABLE_NAME"))
-            .orElse("notes-dev");
+    private final String tableName = System.getenv("TABLE_NAME");
 
     @BeforeEach
-    void setUp() throws Exception {
-        baseURI = Optional.ofNullable(System.getenv("BASE_URI"))
-                .orElse("https://7lxdflqixi.execute-api.us-east-1.amazonaws.com/dev");
+    void setUp() {
+        baseURI = System.getenv("BASE_URI");
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
         AwsTestUtils.clearTable("notes-dev");
     }
 
     @Test
     @Order(1)
+    void shouldHaveEmptyNotes() {
+        get("/notes").then()
+                .log().body(true)
+                .statusCode(200)
+                .body("$.size()", equalTo(0));
+    }
+
+    @Test
+    @Order(2)
     void shouldGetNotes() {
         insertNote("name1", "1");
         insertNote("name2", "2");

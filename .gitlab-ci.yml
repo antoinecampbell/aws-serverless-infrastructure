@@ -52,11 +52,21 @@ integration-test:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform init
     - terraform apply -auto-approve
-    # TODO: Need to extract table name and api url from TF
-#    - cd $CI_PROJECT_DIR/component-tests
-#    - ./gradlew test
+    - export TABLE_NAME=$(terraform output -raw notes_table_name)
+    - export BASE_URI=$(terraform output -raw api_url)
+    - cd $CI_PROJECT_DIR/integration-tests
+    - ./gradlew test
   after_script:
+    - cd $CI_PROJECT_DIR/terraform/resources
     - terraform destroy -auto-approve
+  artifacts:
+    expire_in: 7 days
+    name: terraform-state
+    paths:
+      - terraform/resources/terraform.tfstate
+    reports:
+      junit:
+        - integration-tests/build/test-results/test/*.xml
 
 deploy-dev:
   stage: deploy-dev
