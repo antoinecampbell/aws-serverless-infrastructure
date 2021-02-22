@@ -128,7 +128,7 @@ deploy-prod:
   script:
     - cd terraform
     - terraform init
-    - terraform plan -out=dev.tfplan
+    - terraform plan -out=prod.tfplan
     - terraform show --json prod.tfplan | convert_report > tfplan.json
     - terraform apply prod.tfplan
   cache:
