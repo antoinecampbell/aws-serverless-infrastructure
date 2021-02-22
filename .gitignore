@@ -4,3 +4,7 @@
 
 # IntelliJ
 .idea/*
+
+# Gradle
+.gradle
+build

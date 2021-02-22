@@ -1,7 +1,7 @@
 stages:
-  - test
+  - unit-test
   - build
-  - publish
+  - integration-test
   - deploy-dev
   - deploy-prod
 
@@ -9,7 +9,7 @@ default:
   image: registry.gitlab.com/antoinecampbell/docker-images/build
 
 test:
-  stage: test
+  stage: unit-test
   script:
     - cd node-functions
     - yarn install
@@ -39,6 +39,24 @@ build:
     policy: pull-push
     paths:
       - node-functions/node_modules/
+
+integration-test:
+  stage: integration-test
+  dependencies:
+    - build
+  environment:
+    name: test
+  variables:
+    TF_VAR_environment: ${CI_COMMIT_SHORT_SHA}
+  script:
+    - cd $CI_PROJECT_DIR/terraform/resources
+    - terraform init
+    - terraform apply -auto-approve
+    # TODO: Need to extract table name and api url from TF
+#    - cd $CI_PROJECT_DIR/component-tests
+#    - ./gradlew test
+  after_script:
+    - terraform destroy -auto-approve
 
 deploy-dev:
   stage: deploy-dev
