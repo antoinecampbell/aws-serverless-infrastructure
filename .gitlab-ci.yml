@@ -108,3 +108,34 @@ deploy-dev:
   artifacts:
     reports:
       terraform: terraform/tfplan.json
+
+deploy-prod:
+  stage: deploy-prod
+  when: manual
+  environment:
+    name: prod
+  dependencies:
+    - build
+    - deploy-dev
+  variables:
+    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+    TF_HTTP_USERNAME: gitlab-ci-token
+    TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
+    TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
+  before_script:
+    - apk --no-cache add jq
+    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
+  script:
+    - cd terraform
+    - terraform init
+    - terraform plan -out=dev.tfplan
+    - terraform show --json prod.tfplan | convert_report > tfplan.json
+    - terraform apply prod.tfplan
+  cache:
+    key: ${CI_JOB_NAME}
+    policy: pull-push
+    paths:
+      - terraform/.terraform
+  artifacts:
+    reports:
+      terraform: terraform/tfplan.json
