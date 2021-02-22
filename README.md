@@ -34,3 +34,6 @@ Delete all deployed resources.
 ```shell script
 terraform destroy -var environment=env-name
 ```
+
+## Links
+- Sonar: https://sonarcloud.io/dashboard?id=notes-lambda-functions
