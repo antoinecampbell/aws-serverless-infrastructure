@@ -12,6 +12,7 @@ resource "aws_dynamodb_table" "notes" {
     name = "sk"
     type = "S"
   }
+  tags = local.tags
 }
 
 # outputs
