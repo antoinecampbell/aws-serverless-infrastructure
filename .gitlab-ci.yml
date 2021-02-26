@@ -2,6 +2,7 @@ stages:
   - unit-test
   - build
   - integration-test
+  - publish
   - deploy-dev
   - deploy-prod
 
@@ -59,8 +60,8 @@ integration-test:
     - echo $TABLE_NAME
     - export BASE_URI=$(terraform output -raw api_url)
     - echo $BASE_URI
-    - cd $CI_PROJECT_DIR/integration-tests
-    - ./gradlew test
+    - cd $CI_PROJECT_DIR
+    - ./gradlew integration-tests:test
   after_script:
     - cd $CI_PROJECT_DIR/terraform/resources
     - terraform destroy -auto-approve

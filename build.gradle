@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+publishing {
+    repositories {
+        maven {
+            name "test"
+            url "$buildDir/repo"
+        }
+        maven {
+            name "ci"
+            url ciDeployRepo
+            credentials(HttpHeaderCredentials) {
+                name = "Job-Token"
+                value = ciJobToken
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            group = 'com.captech.serverless'
+            artifactId = 'node-functions'
+            artifact file('node-functions/lambda.zip')
+        }
+    }
+}
