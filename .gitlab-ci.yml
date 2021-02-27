@@ -2,8 +2,8 @@ stages:
   - unit-test
   - build
   - integration-test
-  - version
-  - publish
+#  - version
+#  - publish
   - deploy-dev
   - deploy-prod
 
