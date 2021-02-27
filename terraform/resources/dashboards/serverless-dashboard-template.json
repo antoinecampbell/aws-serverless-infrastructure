@@ -32,7 +32,7 @@
         "region": "${region}",
         "start": "-PT1H",
         "end": "P0D",
-        "stat": "Average",
+        "stat": "Sum",
         "period": 30,
         "title": "Notes table read/write"
       }
@@ -109,6 +109,19 @@
         "view": "timeSeries",
         "stacked": false,
         "stat": "Sum"
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 12,
+      "y": 6,
+      "width": 9,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${notes_table_write_alarm_arn}"
+        ]
       }
     }
   ]
