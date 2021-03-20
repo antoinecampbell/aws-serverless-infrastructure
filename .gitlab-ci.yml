@@ -1,5 +1,4 @@
 stages:
-  - unit-test
   - build
   - integration-test
   - version
@@ -11,7 +10,7 @@ default:
   image: registry.gitlab.com/antoinecampbell/docker-images/build
 
 unit-test:
-  stage: unit-test
+  stage: build
   script:
     - cd node-functions
     - yarn install
@@ -42,6 +41,15 @@ build:
     paths:
       - node-functions/node_modules/
 
+version:
+  stage: build
+  script:
+    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
+    - cat version
+  artifacts:
+    paths:
+      - version
+
 integration-test:
   stage: integration-test
   dependencies:
@@ -58,9 +66,7 @@ integration-test:
     - terraform init
     - terraform apply -auto-approve
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
-    - echo $TABLE_NAME
     - export BASE_URI=$(terraform output -raw api_url)
-    - echo $BASE_URI
     - cd $CI_PROJECT_DIR
     - ./gradlew integration-tests:test
   after_script:
@@ -82,15 +88,6 @@ integration-test:
       - terraform/resources/.terraform
       - integration-tests/.gradle
 
-version:
-  stage: version
-  script:
-    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
-    - cat version
-  artifacts:
-    paths:
-      - version
-
 publish:
   stage: publish
   before_script:
@@ -104,7 +101,8 @@ deploy-dev:
   environment:
     name: dev
   dependencies:
-    - build
+    - version
+    - publish
   variables:
     TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_NAME}
     TF_HTTP_USERNAME: gitlab-ci-token
