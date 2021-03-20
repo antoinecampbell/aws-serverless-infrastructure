@@ -82,22 +82,22 @@ integration-test:
       - terraform/resources/.terraform
       - integration-tests/.gradle
 
-#version:
-#  stage: version
-#  script:
-#    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
-#    - cat version
-#  artifacts:
-#    paths:
-#      - version
-#
-#publish:
-#  stage: publish
-#  before_script:
-#    - export VERSION=$(cat version)
-#    - export REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven
-#  script:
-#    - ./gradlew publish -Pversion=$VERSION -PciDeployRepo=$REGISTRY_URL -PciJobToken=${CI_JOB_TOKEN}
+version:
+  stage: version
+  script:
+    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
+    - cat version
+  artifacts:
+    paths:
+      - version
+
+publish:
+  stage: publish
+  before_script:
+    - export VERSION=$(cat version)
+    - export REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven
+  script:
+    - ./gradlew publish -Pversion=$VERSION -PciDeployRepo=$REGISTRY_URL -PciJobToken=${CI_JOB_TOKEN}
 
 deploy-dev:
   stage: deploy-dev
@@ -110,10 +110,13 @@ deploy-dev:
     TF_HTTP_USERNAME: gitlab-ci-token
     TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
     TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
+    TF_VAR_zip_path: ../lambda.zip
   before_script:
+    - export VERSION=$(cat version)
     - apk --no-cache add jq
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
   script:
+    - "wget --header 'Job-Token: $CI_JOB_TOKEN' -o lambda.zip ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven/com/captech/serverless/node-functions/$VERSION/node-functions-$VERSION.zip"
     - cd terraform
     - terraform init
     - terraform plan -out=dev.tfplan

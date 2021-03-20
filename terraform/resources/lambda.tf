@@ -3,7 +3,7 @@ module "get_notes_lambda" {
   source = "./modules/lambda"
 
   function_name = "get-notes-${var.environment}"
-  filename = "${var.zip_path}node-functions/lambda.zip"
+  filename = var.zip_path
   handler = "src/index.getNotesHandler"
   runtime = "nodejs12.x"
   role = aws_iam_role.notes_lambda_dynamo.arn

@@ -10,6 +10,6 @@ variable "region" {
   default = "us-east-1"
 }
 variable "zip_path" {
-  default = "../../"
+  default = "../../node-functions/lambda.zip"
 }
 
