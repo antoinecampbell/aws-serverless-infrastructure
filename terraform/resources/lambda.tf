@@ -29,7 +29,7 @@ module "create_note_lambda" {
   source = "./modules/lambda"
 
   function_name = "create-notes-${var.environment}"
-  filename = "${var.zip_path}node-functions/lambda.zip"
+  filename = var.zip_path
   handler = "src/index.createNoteHandler"
   runtime = "nodejs12.x"
   role = aws_iam_role.notes_lambda_dynamo.arn
