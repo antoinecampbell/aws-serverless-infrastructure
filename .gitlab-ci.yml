@@ -115,7 +115,7 @@ deploy-dev:
     - apk --no-cache add jq
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
   script:
-    - "wget --header 'Job-Token: $CI_JOB_TOKEN' -o lambda.zip $ARTIFACT_URL"
+    - "wget --header 'Job-Token: $CI_JOB_TOKEN' -O lambda.zip $ARTIFACT_URL"
     - cd terraform
     - terraform init
     - terraform plan -out=dev.tfplan
