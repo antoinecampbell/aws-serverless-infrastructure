@@ -132,7 +132,7 @@ publish:
     - 'wget --header "Job-Token: $CI_JOB_TOKEN" -O lambda.zip $ARTIFACT_URL'
     - cd terraform
     - terraform init
-    - terraform plan -out=dev.tfplan
+    - terraform plan -out=plan.tfplan
     - terraform show --json plan.tfplan | convert_report > tfplan.json
     - terraform apply plan.tfplan
   cache:
