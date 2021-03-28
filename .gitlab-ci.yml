@@ -8,7 +8,7 @@ stages:
   - tag
 
 default:
-  image: registry.gitlab.com/antoinecampbell/docker-images/build
+  image: registry.gitlab.com/antoinecampbell/docker-images/build:v1
 
 unit-test:
   stage: test
