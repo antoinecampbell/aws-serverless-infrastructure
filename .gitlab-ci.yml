@@ -26,6 +26,7 @@ unit-test:
     policy: pull-push
     paths:
       - node-functions/node_modules/
+      - node-functions/build
 
 build:
   stage: build
@@ -64,6 +65,7 @@ sonar:
     policy: pull
     paths:
       - node-functions/node_modules/
+      - node-functions/build
 
 integration-test:
   stage: test
