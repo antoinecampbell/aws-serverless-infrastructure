@@ -4,6 +4,7 @@ stages:
   - quality
   - publish
   - deploy
+  - performance
   - deploy-prod
   - tag
 
@@ -135,12 +136,17 @@ publish:
     - terraform plan -out=plan.tfplan
     - terraform show --json plan.tfplan | convert_report > tfplan.json
     - terraform apply plan.tfplan
+  after_script:
+    - cd terraform
+    - $(terraform output -raw notes_endpoint) > ../notes_endpoint
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - terraform/.terraform
   artifacts:
+    paths:
+      - notes_endpoint
     reports:
       terraform: terraform/tfplan.json
 
@@ -182,6 +188,26 @@ deploy-prod:
   environment:
     name: prod
   <<: *deploy_env
+
+# TODO: Update this to have a version for non-master branches
+performace-dev:
+  stage: performance
+  only:
+    refs:
+      - master
+  dependencies:
+    - deploy-dev
+  image:
+    name: loadimpact/k6
+    entrypoint: ['']
+  before_script:
+    - export URL=$(cat notes_endpoint)
+  script:
+    - cd performance-tests
+    - k6 run --iterations 50 --summary-export performance.json index.js
+  artifacts:
+    reports:
+      load_performance: performance.json
 
 #tag:
 #  stage: tag

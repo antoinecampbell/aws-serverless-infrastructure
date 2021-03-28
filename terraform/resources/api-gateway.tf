@@ -29,3 +29,7 @@ resource "aws_api_gateway_deployment" "stage" {
 output "api_url" {
   value = aws_api_gateway_deployment.stage.invoke_url
 }
+
+output "notes_endpoint" {
+  value = "${aws_api_gateway_deployment.stage.invoke_url}/${aws_api_gateway_resource.note.path}"
+}
