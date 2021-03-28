@@ -16,17 +16,16 @@ unit-test:
     - cd node-functions
     - yarn install
     - yarn test
-    - yarn sonar
   artifacts:
     reports:
       junit:
         - node-functions/build/junit.xml
   cache:
-    key: node
+    key: node-unit-test
     policy: pull-push
     paths:
       - node-functions/node_modules/
-      - node-functions/build
+      - node-functions/build/
 
 build:
   stage: build
@@ -61,11 +60,11 @@ sonar:
     - cd node-functions
     - yarn sonar
   cache:
-    key: node
+    key: node-unit-test
     policy: pull
     paths:
       - node-functions/node_modules/
-      - node-functions/build
+      - node-functions/build/
 
 integration-test:
   stage: test
