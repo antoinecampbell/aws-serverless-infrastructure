@@ -3,7 +3,7 @@ stages:
   - test
   - quality
   - publish
-  - deploy-dev
+  - deploy
   - deploy-prod
   - tag
 
@@ -113,10 +113,7 @@ publish:
   script:
     - ./gradlew publish -Pversion=$VERSION -PciDeployRepo=$REGISTRY_URL -PciJobToken=${CI_JOB_TOKEN}
 
-deploy-dev:
-  stage: deploy-dev
-  environment:
-    name: dev
+.deploy: &deploy_env
   dependencies:
     - version
     - publish
@@ -136,8 +133,8 @@ deploy-dev:
     - cd terraform
     - terraform init
     - terraform plan -out=dev.tfplan
-    - terraform show --json dev.tfplan | convert_report > tfplan.json
-    - terraform apply dev.tfplan
+    - terraform show --json plan.tfplan | convert_report > tfplan.json
+    - terraform apply plan.tfplan
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
@@ -146,6 +143,35 @@ deploy-dev:
   artifacts:
     reports:
       terraform: terraform/tfplan.json
+
+deploy-feature:
+  stage: deploy
+  when: manual
+  except:
+    refs:
+      - master
+  environment:
+    name: dev
+  <<: *deploy_env
+
+deploy-dev:
+  stage: deploy
+  only:
+    refs:
+      - master
+  environment:
+    name: dev
+  <<: *deploy_env
+
+deploy-qa:
+  stage: deploy
+  when: manual
+  only:
+    refs:
+      - master
+  environment:
+    name: qa
+  <<: *deploy_env
 
 deploy-prod:
   stage: deploy-prod
@@ -155,43 +181,20 @@ deploy-prod:
       - master
   environment:
     name: prod
-  dependencies:
-    - build
-    - deploy-dev
-  variables:
-    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_NAME}
-    TF_HTTP_USERNAME: gitlab-ci-token
-    TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
-    TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
-  before_script:
-    - apk --no-cache add jq
-    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
-  script:
-    - cd terraform
-    - terraform init
-    - terraform plan -out=prod.tfplan
-    - terraform show --json prod.tfplan | convert_report > tfplan.json
-    - terraform apply prod.tfplan
-  cache:
-    key: ${CI_JOB_NAME}
-    policy: pull-push
-    paths:
-      - terraform/.terraform
-  artifacts:
-    reports:
-      terraform: terraform/tfplan.json
+  <<: *deploy_env
 
-tag:
-  stage: tag
-  dependencies:
-    - version
-    - deploy-prod
-  before_script:
-    - export VERSION=$(cat version)
-  script:
-    - git --version
-    - git remote remove origin
-    - git remote add origin https://oauth2:${GIT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
-    - git config user.email gitlab-ci.ci
-    - git config user.name gitlab-ci
-    - git tag -a $VERSION -m "Release $VERSION"
+#tag:
+#  stage: tag
+#  dependencies:
+#    - version
+#    - deploy-prod
+#  before_script:
+#    - export VERSION=$(cat version)
+#  script:
+#    - git --version
+#    - git remote remove origin
+#    - git remote add origin https://oauth2:${GIT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+#    - git config user.email gitlab-ci.ci
+#    - git config user.name gitlab-ci
+#    - git tag -a $VERSION -m "Release $VERSION"
+#    - git push --follow-tags
