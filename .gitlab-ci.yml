@@ -207,7 +207,7 @@ performace-dev:
     - k6 run --iterations 50 --summary-export performance.json index.js
   artifacts:
     reports:
-      load_performance: performance.json
+      load_performance: performance-tests/performance.json
 
 #tag:
 #  stage: tag
