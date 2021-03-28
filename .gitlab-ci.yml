@@ -58,6 +58,7 @@ sonar:
     - unit-test
   script:
     - cd node-functions
+    - yarn install
     - yarn sonar
   cache:
     key: node-unit-test
