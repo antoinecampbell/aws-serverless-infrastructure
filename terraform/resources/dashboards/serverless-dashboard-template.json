@@ -113,8 +113,8 @@
     },
     {
       "type": "alarm",
-      "x": 12,
-      "y": 6,
+      "x": 0,
+      "y": 12,
       "width": 9,
       "height": 2,
       "properties": {
@@ -122,6 +122,43 @@
         "alarms": [
           "${notes_table_write_alarm_arn}"
         ]
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 6,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/ApiGateway",
+            "4XXError",
+            "ApiName",
+            "${notes_api_name}",
+            {
+              "color": "#ff7f0e",
+              "yAxis": "right"
+            }
+          ],
+          [
+            ".",
+            "5XXError",
+            ".",
+            ".",
+            {
+              "color": "#d62728",
+              "yAxis": "right"
+            }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "stat": "Sum",
+        "period": 30,
+        "title": "API Errors"
       }
     }
   ]

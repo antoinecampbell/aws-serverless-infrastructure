@@ -15,6 +15,7 @@ resource "aws_cloudwatch_dashboard" "serverless_dashboard" {
     get_notes_function_name: module.get_notes_lambda.function_name
     create_note_function_name: module.create_note_lambda.function_name
     notes_table_write_alarm_arn: aws_cloudwatch_metric_alarm.notes_table_write.arn
+    notes_api_name: aws_api_gateway_rest_api.note.name
   })
 }
 

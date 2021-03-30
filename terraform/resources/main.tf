@@ -2,6 +2,7 @@
 locals {
   tags = {
     Environment = var.environment
+    Version = var.app_version
   }
 }
 
@@ -12,4 +13,9 @@ variable "region" {
 variable "zip_path" {
   default = "../../node-functions/lambda.zip"
 }
-
+variable "auth_enabled" {
+  default = false
+}
+variable "app_version" {
+  default = "latest"
+}

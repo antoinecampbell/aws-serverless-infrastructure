@@ -126,6 +126,7 @@ publish:
     TF_VAR_zip_path: ../lambda.zip
   before_script:
     - export VERSION=$(cat version)
+    - export TF_VAR_app_verison=$VERSION
     - export ARTIFACT_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven/com/captech/serverless/node-functions/$VERSION/node-functions-$VERSION.zip
     - apk --no-cache add jq
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"

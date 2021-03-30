@@ -11,6 +11,12 @@ variable "region" {
 variable "zip_path" {
   default = "../node-functions/lambda.zip"
 }
+variable "auth_enabled" {
+  default = false
+}
+variable "app_version" {
+  default = "latest"
+}
 
 module "resources" {
   source = "./resources"
@@ -18,4 +24,6 @@ module "resources" {
   environment = var.environment
   region = var.region
   zip_path = var.zip_path
+  auth_enabled = var.auth_enabled
+  app_version = var.app_version
 }

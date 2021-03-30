@@ -23,6 +23,7 @@ module "get_notes_lambda_rest" {
   http_method = "GET"
   lambda_arn = module.get_notes_lambda.function_arn
   lambda_invoke_arn = module.get_notes_lambda.invoke_arn
+  api_key_required = var.auth_enabled
 }
 
 module "create_note_lambda" {
@@ -49,6 +50,7 @@ module "create_note_lambda_rest" {
   http_method = "POST"
   lambda_arn = module.create_note_lambda.function_arn
   lambda_invoke_arn = module.create_note_lambda.invoke_arn
+  api_key_required = var.auth_enabled
 }
 
 # outputs
