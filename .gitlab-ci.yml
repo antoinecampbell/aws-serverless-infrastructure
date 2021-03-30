@@ -139,7 +139,7 @@ publish:
     - terraform apply plan.tfplan
   after_script:
     - cd terraform
-    - $(terraform output -raw notes_endpoint) > ../notes_endpoint
+    - terraform output -raw notes_endpoint > ../notes_endpoint
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
