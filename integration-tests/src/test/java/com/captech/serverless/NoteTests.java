@@ -1,6 +1,5 @@
 package com.captech.serverless;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -32,7 +31,7 @@ public class NoteTests {
     @Test
     @Order(1)
     void shouldHaveEmptyNotes() {
-        get("/notes").then()
+        get("/").then()
                 .log().body(true)
                 .statusCode(200)
                 .body("$.size()", equalTo(0));
@@ -43,7 +42,7 @@ public class NoteTests {
     void shouldGetNotes() {
         insertNote("name1", "1");
         insertNote("name2", "2");
-        get("/notes").then()
+        get("/").then()
                 .log().body(true)
                 .statusCode(200)
                 .body("$.size()", equalTo(2))
@@ -58,7 +57,7 @@ public class NoteTests {
         given().contentType("application/json")
                 .body(item)
                 .when()
-                .post("/notes")
+                .post("/")
                 .then()
                 .log().body(true)
                 .body("name", equalTo("name1"))
