@@ -64,6 +64,16 @@
               "color": "#1f77b4",
               "yAxis": "right"
             }
+          ],
+          [
+            ".",
+            "Duration",
+            ".",
+            ".",
+            {
+              "stat": "Average",
+              "color": "#2ca02c"
+            }
           ]
         ],
         "period": 60,
@@ -100,6 +110,16 @@
             {
               "color": "#1f77b4",
               "yAxis": "right"
+            }
+          ],
+          [
+            ".",
+            "Duration",
+            ".",
+            ".",
+            {
+              "stat": "Average",
+              "color": "#2ca02c"
             }
           ]
         ],
