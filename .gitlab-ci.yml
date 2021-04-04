@@ -4,7 +4,6 @@ stages:
   - quality
   - publish
   - deploy
-  - performance
   - deploy-prod
   - tag
 
@@ -68,7 +67,7 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
-integration-test:
+integration-test-&-performance-test:
   stage: test
   dependencies:
     - build
@@ -85,10 +84,13 @@ integration-test:
     - terraform apply -auto-approve
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
     - export BASE_URI=$(terraform output -raw notes_endpoint)
+    - export URL=$(terraform output -raw notes_endpoint)
     - cd $CI_PROJECT_DIR
     - ./gradlew integration-tests:test
-  after_script:
     - cd $CI_PROJECT_DIR/terraform/resources
+    - k6 run --iterations 50 --summary-export performance.json index.js
+  after_script:
+    - cd $CI_PROJECT_DIR/performance-tests
     - terraform destroy -auto-approve
   artifacts:
     when: always
@@ -96,11 +98,13 @@ integration-test:
     name: terraform-state
     paths:
       - terraform/resources/terraform.tfstate
+      - performance-tests/performance.json
     reports:
       junit:
         - integration-tests/build/test-results/test/**/TEST-*.xml
+      load_performance: performance-tests/performance.json
   cache:
-    key: ${CI_JOB_NAME}
+    key: integration-test
     policy: pull-push
     paths:
       - terraform/resources/.terraform
@@ -190,25 +194,31 @@ deploy-prod:
     name: prod
   <<: *deploy_env
 
-# TODO: Update this to have a version for non-master branches
-performace-dev:
-  stage: performance
-  only:
-    refs:
-      - master
-  dependencies:
-    - deploy-dev
-  image:
-    name: loadimpact/k6
-    entrypoint: ['']
-  before_script:
-    - export URL=$(cat notes_endpoint)
-  script:
-    - cd performance-tests
-    - k6 run --iterations 50 --summary-export performance.json index.js
-  artifacts:
-    reports:
-      load_performance: performance-tests/performance.json
+#performace-tests:
+#  stage: quality
+#  only:
+#    refs:
+#      - master
+#  dependencies:
+#    - integration-test
+#  before_script:
+#    - cd $CI_PROJECT_DIR/terraform/resources
+#    - export URL=$(cat notes_endpoint)
+#  script:
+#    - cd performance-tests
+#    - k6 run --iterations 50 --summary-export performance.json index.js
+#  after_script:
+#    - cd $CI_PROJECT_DIR/terraform/resources
+#    - terraform destroy -auto-approve
+#  artifacts:
+#    reports:
+#      load_performance: performance-tests/performance.json
+#  cache:
+#    key: integration-test
+#    policy: pull
+#    paths:
+#      - terraform/resources/.terraform
+#      - integration-tests/.gradle
 
 #tag:
 #  stage: tag
