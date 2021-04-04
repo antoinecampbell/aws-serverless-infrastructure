@@ -9,7 +9,7 @@ export const options = {
 }
 
 export default function () {
-  const response = http.get(`${__ENV.URL}` || 'http://test.k6.io');
+  const response = http.get(`${__ENV.BASE_URI}` || 'http://test.k6.io');
   check(response, {'status was 200': (r) => r.status == 200});
   // sleep(1);
 }

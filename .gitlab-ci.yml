@@ -67,7 +67,7 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
-integration-test-&-performance-test:
+integration-test-performance-test:
   stage: test
   dependencies:
     - build
@@ -84,13 +84,12 @@ integration-test-&-performance-test:
     - terraform apply -auto-approve
     - export TABLE_NAME=$(terraform output -raw notes_table_name)
     - export BASE_URI=$(terraform output -raw notes_endpoint)
-    - export URL=$(terraform output -raw notes_endpoint)
     - cd $CI_PROJECT_DIR
     - ./gradlew integration-tests:test
-    - cd $CI_PROJECT_DIR/terraform/resources
+    - cd $CI_PROJECT_DIR/performance-tests
     - k6 run --iterations 50 --summary-export performance.json index.js
   after_script:
-    - cd $CI_PROJECT_DIR/performance-tests
+    - cd $CI_PROJECT_DIR/terraform/resources
     - terraform destroy -auto-approve
   artifacts:
     when: always
