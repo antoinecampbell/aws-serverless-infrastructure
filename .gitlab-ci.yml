@@ -110,6 +110,7 @@ teardown-env:
     TF_VAR_environment: ${CI_COMMIT_SHORT_SHA}
   script:
     - cd $CI_PROJECT_DIR/terraform/resources
+    - terraform init
     - terraform destroy -auto-approve
   artifacts:
     when: always
@@ -127,6 +128,8 @@ integration-test:
   dependencies:
     - build
     - setup-env
+  environment:
+    name: test
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   before_script:
