@@ -61,9 +61,8 @@ lint:
     - yarn install
     - yarn lint
   artifacts:
-    reports:
-      junit:
-        - node-functions/build/lint.html
+    paths:
+      - node-functions/build/lint.html
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
