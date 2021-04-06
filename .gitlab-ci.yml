@@ -12,6 +12,31 @@ stages:
 default:
   image: registry.gitlab.com/antoinecampbell/docker-images/build
 
+version:
+  stage: build
+  script:
+    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
+    - cat version
+  artifacts:
+    expire_in: 30 days
+    paths:
+      - version
+
+build:
+  stage: build
+  script:
+    - cd node-functions
+    - yarn build-zip
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - node-functions/lambda.zip
+  cache:
+    key: ${CI_JOB_NAME}
+    policy: pull-push
+    paths:
+      - node-functions/node_modules/
+
 unit-test:
   stage: test
   script:
@@ -29,30 +54,21 @@ unit-test:
       - node-functions/node_modules/
       - node-functions/build/
 
-build:
-  stage: build
+lint:
+  stage: test
   script:
     - cd node-functions
-    - yarn build-zip
+    - yarn install
+    - yarn lint
   artifacts:
-    expire_in: 7 days
-    paths:
-      - node-functions/lambda.zip
+    reports:
+      junit:
+        - node-functions/build/lint.html
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - node-functions/node_modules/
-
-version:
-  stage: build
-  script:
-    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
-    - cat version
-  artifacts:
-    expire_in: 30 days
-    paths:
-      - version
 
 sonar:
   stage: quality

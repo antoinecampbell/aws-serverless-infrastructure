@@ -5,11 +5,12 @@
   "scripts": {
     "test": "jest",
     "build-zip": "yarn install --production && rm -rf lambda.zip && zip -q -r lambda.zip node_modules src/*",
-    "build-zip:local": "yarn run build-zip && yarn",
-    "sonar": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN}",
-    "sonar:local": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000}",
+    "build-zip:local": "yarn build-zip && yarn",
+    "sonar": "sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN}",
+    "sonar:local": "sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000}",
     "start": "node -e \"console.log(require('./src/index').getNotesHandler({}));\"",
-    "start-create": "node -e \"console.log(require('./src/index').createNoteHandler({body: '{\\\"name\\\": \\\"note1\\\"}'}));\""
+    "start-create": "node -e \"console.log(require('./src/index').createNoteHandler({body: '{\\\"name\\\": \\\"note1\\\"}'}));\"",
+    "lint": "yarn eslint -f html -o build/lint.html src/**"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1.0",
@@ -18,6 +19,12 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
+    "eslint": "^7.23.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-security": "^1.4.0",
     "jest": "^26.6.3",
     "jest-junit": "^12.0.0",
     "sonar-scanner": "^3.1.0"
