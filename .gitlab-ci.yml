@@ -44,6 +44,7 @@ unit-test:
     - yarn install
     - yarn test
   artifacts:
+    expire_in: 7 days
     reports:
       junit:
         - node-functions/build/junit.xml
@@ -61,6 +62,7 @@ lint:
     - yarn install
     - yarn lint
   artifacts:
+    expire_in: 7 days
     paths:
       - node-functions/build/lint.html
   cache:
