@@ -5,7 +5,7 @@ module "get_notes_lambda" {
   function_name = "get-notes-${var.environment}"
   filename = var.zip_path
   handler = "src/index.getNotesHandler"
-  runtime = "nodejs12.x"
+  runtime = "nodejs14.x"
   role = aws_iam_role.notes_lambda_dynamo.arn
   environment_variables = {
     TABLE_NAME = aws_dynamodb_table.notes.name
@@ -32,7 +32,7 @@ module "create_note_lambda" {
   function_name = "create-notes-${var.environment}"
   filename = var.zip_path
   handler = "src/index.createNoteHandler"
-  runtime = "nodejs12.x"
+  runtime = "nodejs14.x"
   role = aws_iam_role.notes_lambda_dynamo.arn
   environment_variables = {
     TABLE_NAME = aws_dynamodb_table.notes.name

@@ -1,4 +1,5 @@
 const NoteRepository = require('./note-repository');
+const Note = require('./note')
 
 const noteRepository = new NoteRepository();
 
@@ -16,7 +17,7 @@ exports.getNotesHandler = async (event) => {
     console.error('Error fetching notes', e);
     output = {
       statusCode: 500,
-      body: JSON.stringify({error: e && e.message})
+      body: JSON.stringify({error: e?.message})
     }
   }
 
@@ -29,7 +30,7 @@ exports.createNoteHandler = async (event) => {
   try {
     console.log('Request:', JSON.stringify(event));
     const body = JSON.parse(event.body);
-    const note = await noteRepository.createNote(body);
+    const note = await noteRepository.createNote(new Note(body));
     console.log('Notes', note);
     output = {
       statusCode: 201,
@@ -39,7 +40,7 @@ exports.createNoteHandler = async (event) => {
     console.error('Error creating note', e);
     output = {
       statusCode: 500,
-      body: JSON.stringify({error: e && e.message})
+      body: JSON.stringify({error: e?.message})
     }
   }
 

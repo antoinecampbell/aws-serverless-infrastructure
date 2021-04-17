@@ -86,6 +86,36 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
+check-dependency-usage:
+  stage: quality
+  dependencies:
+    - unit-test
+  script:
+    - cd node-functions
+    - yarn install
+    - yarn check-dependency-usage
+  cache:
+    key: node-unit-test
+    policy: pull
+    paths:
+      - node-functions/node_modules/
+      - node-functions/build/
+
+check-dependency-vulnerabilities:
+  stage: quality
+  dependencies:
+    - unit-test
+  script:
+    - cd node-functions
+    - yarn install
+    - yarn check-dependency-vulnerabilities
+  cache:
+    key: node-unit-test
+    policy: pull
+    paths:
+      - node-functions/node_modules/
+      - node-functions/build/
+
 setup-env:
   stage: setup-test-env
   dependencies:
