@@ -86,7 +86,7 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
-check-dependency-usage:
+dependency-usage:
   stage: quality
   dependencies:
     - unit-test
@@ -101,7 +101,7 @@ check-dependency-usage:
       - node-functions/node_modules/
       - node-functions/build/
 
-check-dependency-vulnerabilities:
+dependency-vulnerabilities:
   stage: quality
   dependencies:
     - unit-test
