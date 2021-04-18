@@ -86,7 +86,7 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
-dep-check:
+dep-usage:
   stage: test
   dependencies:
     - build
