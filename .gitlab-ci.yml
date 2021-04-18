@@ -12,22 +12,15 @@ stages:
 default:
   image: registry.gitlab.com/antoinecampbell/docker-images/build
 
-unit-test:
-  stage: test
+version:
+  stage: build
   script:
-    - cd node-functions
-    - yarn install
-    - yarn test
+    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
+    - cat version
   artifacts:
-    reports:
-      junit:
-        - node-functions/build/junit.xml
-  cache:
-    key: node-unit-test
-    policy: pull-push
+    expire_in: 30 days
     paths:
-      - node-functions/node_modules/
-      - node-functions/build/
+      - version
 
 build:
   stage: build
@@ -44,15 +37,39 @@ build:
     paths:
       - node-functions/node_modules/
 
-version:
-  stage: build
+unit-test:
+  stage: test
   script:
-    - date +"%Y%m%d%H%M-$CI_COMMIT_SHORT_SHA" > version
-    - cat version
+    - cd node-functions
+    - yarn install
+    - yarn test
   artifacts:
-    expire_in: 30 days
+    expire_in: 7 days
+    reports:
+      junit:
+        - node-functions/build/junit.xml
+  cache:
+    key: node-unit-test
+    policy: pull-push
     paths:
-      - version
+      - node-functions/node_modules/
+      - node-functions/build/
+
+lint:
+  stage: test
+  script:
+    - cd node-functions
+    - yarn install
+    - yarn lint
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - node-functions/build/lint.html
+  cache:
+    key: ${CI_JOB_NAME}
+    policy: pull-push
+    paths:
+      - node-functions/node_modules/
 
 sonar:
   stage: quality
@@ -62,6 +79,36 @@ sonar:
     - cd node-functions
     - yarn install
     - yarn sonar
+  cache:
+    key: node-unit-test
+    policy: pull
+    paths:
+      - node-functions/node_modules/
+      - node-functions/build/
+
+dependency-usage:
+  stage: quality
+  dependencies:
+    - unit-test
+  script:
+    - cd node-functions
+    - yarn install
+    - yarn check-dependency-usage
+  cache:
+    key: node-unit-test
+    policy: pull
+    paths:
+      - node-functions/node_modules/
+      - node-functions/build/
+
+dependency-vulnerabilities:
+  stage: quality
+  dependencies:
+    - unit-test
+  script:
+    - cd node-functions
+    - yarn install
+    - yarn check-dependency-vulnerabilities
   cache:
     key: node-unit-test
     policy: pull

@@ -16,7 +16,7 @@ module.exports = class NoteRepository {
       TableName: this.tableName,
       KeyConditionExpression: 'pk = :note',
       ExpressionAttributeValues: {':note': {'S': 'Note'}}
-    })).then(response => response.Items && response.Items.map(item => unmarshall(item)) || []);
+    })).then(response => response.Items?.map(item => unmarshall(item)) || []);
   }
 
   createNote(note) {
@@ -27,7 +27,7 @@ module.exports = class NoteRepository {
     }
     return this.client.send(new PutItemCommand({
       TableName: this.tableName,
-      Item: marshall(item),
+      Item: marshall(item, {removeUndefinedValues: true}),
     })).then(() => item)
   }
 }

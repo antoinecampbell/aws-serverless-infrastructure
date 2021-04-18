@@ -1,4 +1,5 @@
 const NoteRepository = require('../src/note-repository');
+const Note = require('../src/note')
 const {DynamoDBClient} = require('@aws-sdk/client-dynamodb');
 jest.mock('@aws-sdk/client-dynamodb');
 
@@ -34,8 +35,13 @@ describe('NoteRepository', () => {
   });
 
   it('should create a note', async () => {
-    await noteRepository.createNote({name: 'name1'});
+    const note = new Note({name: 'name1'})
+    const createdNote = await noteRepository.createNote(note);
 
     expect(DynamoDBClient.prototype.send).toHaveBeenCalledTimes(1);
+    note.pk = 'Note';
+    note.sk = createdNote.sk;
+    expect(createdNote).toEqual(note);
+    expect(Object.keys(createdNote)).toEqual(['pk', 'sk', 'name'])
   });
 });
