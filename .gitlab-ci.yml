@@ -32,7 +32,7 @@ build:
     paths:
       - node-functions/lambda.zip
   cache:
-    key: ${CI_JOB_NAME}
+    key: build
     policy: pull-push
     paths:
       - node-functions/node_modules/
@@ -86,32 +86,33 @@ sonar:
       - node-functions/node_modules/
       - node-functions/build/
 
-lib-check:
+dep-check:
   stage: test
+  dependencies:
+    - build
   script:
     - cd node-functions
     - yarn install
     - yarn check-dependency-usage
   cache:
-    key: ${CI_JOB_NAME}
-    policy: pull-push
+    key: build
+    policy: pull
     paths:
       - node-functions/node_modules/
 
-lib-vulnerabilities:
-  stage: quality
+dep-vulnerabilities:
+  stage: test
   dependencies:
-    - unit-test
+    - build
   script:
     - cd node-functions
     - yarn install
     - yarn check-dependency-vulnerabilities
   cache:
-    key: node-unit-test
+    key: build
     policy: pull
     paths:
       - node-functions/node_modules/
-      - node-functions/build/
 
 setup-env:
   stage: setup-test-env
