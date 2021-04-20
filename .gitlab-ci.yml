@@ -37,19 +37,20 @@ build:
     paths:
       - node-functions/node_modules/
 
-unit-test:
+unit-test-sonar:
   stage: test
   script:
     - cd node-functions
     - yarn install
     - yarn test
+    - yarn sonar
   artifacts:
     expire_in: 7 days
     reports:
       junit:
         - node-functions/build/junit.xml
   cache:
-    key: node-unit-test
+    key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - node-functions/node_modules/
@@ -70,21 +71,6 @@ lint:
     policy: pull-push
     paths:
       - node-functions/node_modules/
-
-sonar:
-  stage: quality
-  dependencies:
-    - unit-test
-  script:
-    - cd node-functions
-    - yarn install
-    - yarn sonar
-  cache:
-    key: node-unit-test
-    policy: pull
-    paths:
-      - node-functions/node_modules/
-      - node-functions/build/
 
 dep-usage:
   stage: test
