@@ -3,6 +3,7 @@ package com.captech.serverless;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -11,12 +12,15 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.baseURI;
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 
+@Tag("integration-test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NoteTests {
+public class IntegrationTests {
 
     private final String tableName = System.getenv("TABLE_NAME");
 

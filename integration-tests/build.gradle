@@ -11,6 +11,7 @@ repositories {
 ext {
     junitVersion = '5.7.1'
     awsSdkVersion = '2.16.3'
+    restAssuredVersion = '4.3.3'
 }
 
 dependencies {
@@ -21,7 +22,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
     testImplementation "org.junit.jupiter:junit-jupiter-params"
     // Rest Assured
-    implementation "io.rest-assured:rest-assured:4.3.3"
+    implementation "io.rest-assured:rest-assured:$restAssuredVersion"
 
     // AWS BOM
     testImplementation(platform("software.amazon.awssdk:bom:$awsSdkVersion"))
@@ -29,6 +30,14 @@ dependencies {
     testImplementation "software.amazon.awssdk:dynamodb"
 }
 
-test {
-    useJUnitPlatform()
+task integrationTest(type: Test, group: 'verification') {
+    useJUnitPlatform {
+        includeTags 'integration-test'
+    }
+}
+
+task smokeTest(type: Test, group: 'verification') {
+    useJUnitPlatform {
+        includeTags 'smoke-test'
+    }
 }
