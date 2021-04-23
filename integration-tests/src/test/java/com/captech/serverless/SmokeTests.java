@@ -15,8 +15,9 @@ import static io.restassured.RestAssured.get;
 public class SmokeTests {
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         baseURI = System.getenv("BASE_URI");
+        System.out.println("Base URI: " + baseURI);
     }
 
     @Test

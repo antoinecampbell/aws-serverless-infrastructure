@@ -172,16 +172,18 @@ integration-test:
     - ./gradlew integrationTest
   artifacts:
     expire_in: 7 days
+    paths:
+      - build/reports/tests/**
     reports:
       junit:
-        - integration-tests/build/test-results/test/**/TEST-*.xml
+        - integration-tests/build/test-results/**/TEST-*.xml
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
     paths:
       - integration-tests/.gradle
 
-performace-test:
+performance-test:
   stage: quality
   dependencies:
     - setup-env
@@ -198,6 +200,9 @@ performace-test:
 
 publish:
   stage: publish
+  needs:
+    - integration-test
+    - performance-test
   before_script:
     - export VERSION=$(cat version)
     - export REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven
@@ -229,7 +234,7 @@ publish:
     - terraform apply plan.tfplan
   after_script:
     - cd terraform
-    - terraform output -raw notes_endpoint > ../notes_endpoint
+    - terraform output -raw notes_endpoint > $CI_PROJECT_DIR/notes_endpoint
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
@@ -295,9 +300,11 @@ smoke-test:
     - ./gradlew smokeTest
   artifacts:
     expire_in: 7 days
+    paths:
+      - build/reports/tests/**
     reports:
       junit:
-        - integration-tests/build/test-results/test/**/TEST-*.xml
+        - integration-tests/build/test-results/**/TEST-*.xml
   cache:
     key: ${CI_JOB_NAME}
     policy: pull-push
