@@ -282,6 +282,8 @@ deploy-prod:
 
 smoke-test:
   stage: smoke-test
+  needs:
+    - deploy-prod
   dependencies:
     - deploy-prod
   variables:
