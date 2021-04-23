@@ -191,7 +191,7 @@ performance-test:
     - export URL=$(cat notes_endpoint)
   script:
     - cd performance-tests
-    - k6 run --iterations 50 --summary-export performance.json index.js
+    - k6 run --vus 2 --duration 30s --summary-export performance.json index.js
   artifacts:
     paths:
       - performance-tests/performance.json
