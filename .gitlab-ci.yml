@@ -201,6 +201,7 @@ performance-test:
 publish:
   stage: publish
   needs:
+    - version
     - integration-test
     - performance-test
   before_script:
