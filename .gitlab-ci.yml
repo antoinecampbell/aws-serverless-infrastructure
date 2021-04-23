@@ -204,6 +204,8 @@ publish:
     - version
     - build
   needs:
+    - version
+    - build
     - integration-test
     - performance-test
   before_script:
