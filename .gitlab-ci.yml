@@ -172,8 +172,9 @@ integration-test:
     - ./gradlew integrationTest
   artifacts:
     expire_in: 7 days
+    name: test-reports
     paths:
-      - build/reports/tests/**
+      - integration-tests/build/reports/tests/**
     reports:
       junit:
         - integration-tests/build/test-results/**/TEST-*.xml
@@ -305,8 +306,9 @@ smoke-test:
     - ./gradlew smokeTest
   artifacts:
     expire_in: 7 days
+    name: test-reports
     paths:
-      - build/reports/tests/**
+      - integration-tests/build/reports/tests/**
     reports:
       junit:
         - integration-tests/build/test-results/**/TEST-*.xml
