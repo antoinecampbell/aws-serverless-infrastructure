@@ -27,3 +27,7 @@ module "resources" {
   auth_enabled = var.auth_enabled
   app_version = var.app_version
 }
+
+output "notes_endpoint" {
+  value = module.resources.notes_endpoint
+}
