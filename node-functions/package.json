@@ -6,7 +6,7 @@
     "test": "jest",
     "build-zip": "yarn install --production && rm -rf lambda.zip && zip -q -r lambda.zip node_modules src/*",
     "build-zip:local": "yarn build-zip && yarn",
-    "sonar": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN}",
+    "sonar": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000} -Dsonar.organization=${SONAR_ORGANIZATION} -Dsonar.login=${SONAR_TOKEN} -Dsonar.branch.name=${CI_COMMIT_BRANCH:master}",
     "sonar:local": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000}",
     "start": "node -e \"console.log(require('./src/index').getNotesHandler({}));\"",
     "start-create": "node -e \"console.log(require('./src/index').createNoteHandler({body: '{\\\"name\\\": \\\"note1\\\"}'}));\"",
