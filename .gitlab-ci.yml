@@ -295,6 +295,9 @@ smoke-test:
   stage: smoke-test
   needs:
     - deploy-prod
+  only:
+    refs:
+      - master
   dependencies:
     - deploy-prod
   variables:
