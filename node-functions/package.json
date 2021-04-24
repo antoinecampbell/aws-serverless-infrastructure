@@ -10,7 +10,7 @@
     "sonar:local": "yarn sonar-scanner -Dsonar.host.url=${SONAR_HOST_URL:-http://localhost:9000}",
     "start": "node -e \"console.log(require('./src/index').getNotesHandler({}));\"",
     "start-create": "node -e \"console.log(require('./src/index').createNoteHandler({body: '{\\\"name\\\": \\\"note1\\\"}'}));\"",
-    "lint": "yarn eslint -f html -o build/lint.html src/**",
+    "lint": "yarn eslint --max-warnings 0 -f html -o build/lint.html src/**",
     "check-dependency-usage": "yarn dependency-check src/** test/** --no-dev --verbose",
     "check-dependency-vulnerabilities": "yarn retire --nodepath src/**"
   },
