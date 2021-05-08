@@ -34,7 +34,16 @@
         "end": "P0D",
         "stat": "Sum",
         "period": 30,
-        "title": "Notes table read/write"
+        "title": "Notes table read/write",
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "Write Threshold",
+              "value": 5,
+              "yAxis": "right"
+            }
+          ]
+        }
       }
     },
     {
@@ -81,7 +90,16 @@
         "title": "Lambda ${get_notes_function_name}",
         "view": "timeSeries",
         "stacked": false,
-        "stat": "Sum"
+        "stat": "Sum",
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "Error Threshold",
+              "value": 5,
+              "yAxis": "right"
+            }
+          ]
+        }
       }
     },
     {
@@ -128,20 +146,16 @@
         "title": "Lambda ${create_note_function_name}",
         "view": "timeSeries",
         "stacked": false,
-        "stat": "Sum"
-      }
-    },
-    {
-      "type": "alarm",
-      "x": 0,
-      "y": 12,
-      "width": 9,
-      "height": 2,
-      "properties": {
-        "title": "",
-        "alarms": [
-          "${notes_table_write_alarm_arn}"
-        ]
+        "stat": "Sum",
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "Error Threshold",
+              "value": 5,
+              "yAxis": "right"
+            }
+          ]
+        }
       }
     },
     {
@@ -178,7 +192,81 @@
         "region": "us-east-1",
         "stat": "Sum",
         "period": 30,
-        "title": "API Errors"
+        "title": "API Errors",
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "Error Threshold",
+              "value": 5,
+              "yAxis": "right"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 0,
+      "y": 12,
+      "width": 8,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${notes_table_write_alarm_arn}"
+        ]
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 0,
+      "y": 14,
+      "width": 8,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${create_note_lambda_error_alarm_arn}"
+        ]
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 0,
+      "y": 16,
+      "width": 8,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${get_notes_lambda_error_alarm_arn}"
+        ]
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 12,
+      "y": 12,
+      "width": 8,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${notes_api_5xx_error_alarm_arn}"
+        ]
+      }
+    },
+    {
+      "type": "alarm",
+      "x": 12,
+      "y": 14,
+      "width": 8,
+      "height": 2,
+      "properties": {
+        "title": "",
+        "alarms": [
+          "${notes_api_4xx_error_alarm_arn}"
+        ]
       }
     }
   ]
