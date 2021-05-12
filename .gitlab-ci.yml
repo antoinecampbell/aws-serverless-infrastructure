@@ -338,18 +338,52 @@ stop-dev:
   environment:
     name: dev
     action: stop
+  needs:
+    - version
+    - publish
+    - deploy-dev
+  only:
+    refs:
+      - master
+  <<: *stop-environment
+
+stop-feature:
+  environment:
+    name: dev
+    action: stop
+  needs:
+    - version
+    - publish
+    - deploy-feature
+  except:
+    refs:
+      - master
   <<: *stop-environment
 
 stop-qa:
   environment:
     name: qa
     action: stop
+  needs:
+    - version
+    - publish
+    - deploy-qa
+  only:
+    refs:
+      - master
   <<: *stop-environment
 
 stop-prod:
   environment:
     name: prod
     action: stop
+  needs:
+    - version
+    - publish
+    - deploy-prod
+  only:
+    refs:
+      - master
   <<: *stop-environment
 
 smoke-test:
