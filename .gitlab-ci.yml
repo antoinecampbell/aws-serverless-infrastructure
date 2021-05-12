@@ -9,6 +9,7 @@ stages:
   - deploy-prod
   - smoke-test
   - tag
+  - stop
 
 default:
   image: registry.gitlab.com/antoinecampbell/docker-images/build
@@ -264,6 +265,7 @@ deploy-feature:
       - master
   environment:
     name: dev
+    on_stop: stop-dev
   <<: *deploy_env
 
 deploy-dev:
@@ -273,6 +275,7 @@ deploy-dev:
       - master
   environment:
     name: dev
+    on_stop: stop-dev
   <<: *deploy_env
 
 deploy-qa:
@@ -283,6 +286,7 @@ deploy-qa:
       - master
   environment:
     name: qa
+    on_stop: stop-qa
   <<: *deploy_env
 
 deploy-prod:
@@ -293,7 +297,60 @@ deploy-prod:
       - master
   environment:
     name: prod
+    on_stop: stop-prod
   <<: *deploy_env
+
+.stop-environment: &stop-environment
+  dependencies:
+    - version
+    - publish
+  stage: stop
+  when: manual
+  variables:
+    TF_HTTP_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_NAME}
+    TF_HTTP_USERNAME: gitlab-ci-token
+    TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
+    TF_VAR_environment: ${CI_ENVIRONMENT_NAME}
+    TF_VAR_zip_path: ../lambda.zip
+  before_script:
+    - export VERSION=$(cat version)
+    - export TF_VAR_app_version=$VERSION
+    - export ARTIFACT_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven/com/captech/serverless/node-functions/$VERSION/node-functions-$VERSION.zip
+    - apk --no-cache add jq
+    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
+  script:
+    - 'wget --header "Job-Token: $CI_JOB_TOKEN" -O lambda.zip $ARTIFACT_URL'
+    - cd terraform
+    - terraform init
+    - terraform plan -destroy -out=plan.tfplan
+    - terraform show --json plan.tfplan | convert_report > tfplan.json
+    - terraform apply plan.tfplan
+  cache:
+    key: ${CI_JOB_NAME}
+    policy: pull-push
+    paths:
+      - terraform/.terraform
+  artifacts:
+    reports:
+      terraform: terraform/tfplan.json
+
+stop-dev:
+  environment:
+    name: dev
+    action: stop
+  <<: *stop-environment
+
+stop-qa:
+  environment:
+    name: qa
+    action: stop
+  <<: *stop-environment
+
+stop-prod:
+  environment:
+    name: prod
+    action: stop
+  <<: *stop-environment
 
 smoke-test:
   stage: smoke-test
